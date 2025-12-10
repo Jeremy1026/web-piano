@@ -241,7 +241,16 @@ export default class extends Controller {
 
       if (data.token) {
         const displayName = data.name || 'your recording'
-        this.statusTarget.innerHTML = `Saved! <a href="/play/${data.token}">Play "${displayName}"</a>`
+        const playbackUrl = `${window.location.origin}/play/${data.token}`
+        this.statusTarget.innerHTML = `
+          <div class="save-success">
+            <p>Saved! <a href="/play/${data.token}">Play "${displayName}"</a></p>
+            <div class="share-url">
+              <input type="text" readonly value="${playbackUrl}" class="url-input" id="playback-url" />
+              <button type="button" class="btn btn-copy" onclick="navigator.clipboard.writeText('${playbackUrl}').then(() => { this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy Link', 2000); })">Copy Link</button>
+            </div>
+          </div>
+        `
         this.recordedNotes = []
         this.nameInputTarget.value = ''
         this.nameInputTarget.classList.add('hidden')
