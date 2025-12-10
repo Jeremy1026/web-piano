@@ -8,7 +8,8 @@ class RecordingsController < ApplicationController
     notes_params.each do |note_data|
       recording.notes.create!(
         note: note_data[:note],
-        ms: note_data[:ms].to_i
+        ms: note_data[:ms].to_i,
+        duration: note_data[:duration].to_i
       )
     end
 

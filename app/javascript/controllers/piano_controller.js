@@ -24,6 +24,7 @@ export default class extends Controller {
     this.isRecording = false
     this.recordingStartTime = null
     this.recordedNotes = []
+    this.noteStartTimes = new Map() // Track when each note started for duration calculation
 
     // Build key mapping from data attributes
     this.keyTargets.forEach(keyElement => {
@@ -118,10 +119,11 @@ export default class extends Controller {
       this.initAudioContext()
     }
 
-    // Record the note if recording
+    // Track note start time if recording
     if (this.isRecording) {
       const ms = Date.now() - this.recordingStartTime
-      this.recordedNotes.push({ note, ms })
+      this.noteStartTimes.set(note, { ms, index: this.recordedNotes.length })
+      this.recordedNotes.push({ note, ms, duration: 0 })
     }
 
     // Create oscillator for piano-like sound
@@ -171,6 +173,15 @@ export default class extends Controller {
   endNote(note, keyElement) {
     const noteData = this.activeOscillators.get(note)
     if (!noteData) return
+
+    // Calculate and store duration if recording
+    if (this.isRecording && this.noteStartTimes.has(note)) {
+      const startData = this.noteStartTimes.get(note)
+      const endMs = Date.now() - this.recordingStartTime
+      const duration = endMs - startData.ms
+      this.recordedNotes[startData.index].duration = duration
+      this.noteStartTimes.delete(note)
+    }
 
     const { oscillators, gainNodes } = noteData
     const now = this.audioContext.currentTime
@@ -300,6 +311,7 @@ export default class extends Controller {
     this.isRecording = true
     this.recordingStartTime = Date.now()
     this.recordedNotes = []
+    this.noteStartTimes.clear()
 
     this.recordBtnTarget.classList.add('recording')
     this.recordLabelTarget.textContent = 'Stop'
@@ -309,6 +321,14 @@ export default class extends Controller {
   }
 
   stopRecording() {
+    // Finalize any notes still being held when recording stops
+    const endMs = Date.now() - this.recordingStartTime
+    this.noteStartTimes.forEach((startData) => {
+      const duration = endMs - startData.ms
+      this.recordedNotes[startData.index].duration = duration
+    })
+    this.noteStartTimes.clear()
+
     this.isRecording = false
     this.recordBtnTarget.classList.remove('recording')
     this.recordLabelTarget.textContent = 'Record'

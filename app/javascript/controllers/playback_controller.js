@@ -136,9 +136,10 @@ export default class extends Controller {
       if (noteData.ms < startOffset) continue
 
       const delay = noteData.ms - startOffset
+      const duration = noteData.duration || 200
       const timeout = setTimeout(() => {
         if (this.isPlaying) {
-          this.playNoteSound(noteData.note)
+          this.playNoteSound(noteData.note, duration)
           this.currentNoteIndex = i + 1
 
           // Check if this is the last note
@@ -148,7 +149,7 @@ export default class extends Controller {
                 this.statusTarget.textContent = 'Finished!'
                 this.stop()
               }
-            }, 500)
+            }, duration + 300)
           }
         }
       }, delay)
@@ -157,11 +158,15 @@ export default class extends Controller {
     }
   }
 
-  playNoteSound(note) {
+  playNoteSound(note, duration) {
     const frequency = this.constructor.noteFrequencies[note]
     if (!frequency) return
 
     const keyElement = this.noteToKey.get(note)
+
+    // Convert duration from ms to seconds
+    const durationSec = duration / 1000
+    const releaseTime = 0.3 // Release envelope time in seconds
 
     // Create oscillators
     const oscillator = this.audioContext.createOscillator()
@@ -176,15 +181,22 @@ export default class extends Controller {
     oscillator2.frequency.setValueAtTime(frequency * 2, this.audioContext.currentTime)
     oscillator2.detune.setValueAtTime(5, this.audioContext.currentTime)
 
-    // Envelope
+    // Envelope with duration-based sustain and release
     const now = this.audioContext.currentTime
+    const sustainEnd = now + durationSec
+
+    // Attack and sustain
     gainNode.gain.setValueAtTime(0, now)
     gainNode.gain.linearRampToValueAtTime(0.4, now + 0.01)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
+    gainNode.gain.setValueAtTime(0.2, now + 0.3) // Sustain level
+    gainNode.gain.setValueAtTime(0.2, sustainEnd) // Hold sustain until release
+    gainNode.gain.exponentialRampToValueAtTime(0.001, sustainEnd + releaseTime)
 
     gainNode2.gain.setValueAtTime(0, now)
     gainNode2.gain.linearRampToValueAtTime(0.1, now + 0.01)
-    gainNode2.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
+    gainNode2.gain.setValueAtTime(0.05, now + 0.3)
+    gainNode2.gain.setValueAtTime(0.05, sustainEnd)
+    gainNode2.gain.exponentialRampToValueAtTime(0.001, sustainEnd + releaseTime)
 
     // Connect
     oscillator.connect(gainNode)
@@ -195,15 +207,16 @@ export default class extends Controller {
     oscillator.start()
     oscillator2.start()
 
-    oscillator.stop(now + 1)
-    oscillator2.stop(now + 1)
+    // Stop after duration + release
+    oscillator.stop(sustainEnd + releaseTime + 0.1)
+    oscillator2.stop(sustainEnd + releaseTime + 0.1)
 
-    // Visual feedback
+    // Visual feedback matches the note duration
     if (keyElement) {
       keyElement.classList.add('active')
       setTimeout(() => {
         keyElement.classList.remove('active')
-      }, 200)
+      }, duration)
     }
   }
 }
