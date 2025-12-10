@@ -11,10 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2025_12_10_035425) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
-  create_table "notes", force: :cascade do |t|
+  create_table "notes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "recording_id", null: false
     t.string "note"
     t.integer "ms"
@@ -23,7 +20,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_10_035425) do
     t.index ["recording_id"], name: "index_notes_on_recording_id"
   end
 
-  create_table "recordings", force: :cascade do |t|
+  create_table "recordings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"

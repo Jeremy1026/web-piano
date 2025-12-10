@@ -1,14 +1,17 @@
-# PostgreSQL. Versions 9.3 and up are supported.
+# MySQL. Versions 5.5.8 and up are supported.
 #
-# Install the pg driver:
-#   gem install pg
+# Install the MySQL driver:
+#   gem install mysql2
 # On macOS with Homebrew:
-#   brew install postgresql
+#   brew install mysql
 #
 default: &default
-  adapter: postgresql
-  encoding: unicode
+  adapter: mysql2
+  encoding: utf8mb4
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: root
+  password:
+  socket: /tmp/mysql.sock
 
 development:
   <<: *default
