@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  recording: one
+  note: MyString
+  ms: 1
+
+two:
+  recording: two
+  note: MyString
+  ms: 1

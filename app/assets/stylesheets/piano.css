@@ -1,0 +1,326 @@
+* {
+  box-sizing: border-box;
+}
+
+.hidden {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.piano-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+.piano-title {
+  color: #fff;
+  font-size: 3rem;
+  font-weight: 300;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.2em;
+}
+
+.piano {
+  display: flex;
+  position: relative;
+  background: linear-gradient(to bottom, #2c2c2c 0%, #1a1a1a 100%);
+  padding: 20px 15px 10px;
+  border-radius: 10px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 6px #1a1a1a,
+    inset 0 -3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.key {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key.white {
+  width: 55px;
+  height: 200px;
+  background: linear-gradient(to bottom, #f8f8f8 0%, #fff 10%, #f0f0f0 90%, #d8d8d8 100%);
+  border: 1px solid #ccc;
+  border-radius: 0 0 6px 6px;
+  margin: 0 2px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 #fff,
+    inset 0 -3px 0 #c8c8c8;
+  z-index: 1;
+}
+
+.key.white:hover {
+  background: linear-gradient(to bottom, #fff 0%, #fff 10%, #f8f8f8 90%, #e8e8e8 100%);
+}
+
+.key.white.active,
+.key.white:active {
+  background: linear-gradient(to bottom, #e8e8e8 0%, #f0f0f0 10%, #e0e0e0 90%, #c8c8c8 100%);
+  box-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 #f0f0f0,
+    inset 0 -1px 0 #b8b8b8;
+  transform: translateY(2px);
+}
+
+.key.black {
+  width: 36px;
+  height: 130px;
+  background: linear-gradient(to bottom, #2c2c2c 0%, #1a1a1a 50%, #0d0d0d 100%);
+  border-radius: 0 0 4px 4px;
+  margin-left: -20px;
+  margin-right: -20px;
+  z-index: 2;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.05),
+    inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.key.black:hover {
+  background: linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+}
+
+.key.black.active,
+.key.black:active {
+  background: linear-gradient(to bottom, #1a1a1a 0%, #0d0d0d 50%, #000 100%);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.03);
+  transform: translateY(2px);
+  height: 128px;
+}
+
+.key-label {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.key.white .key-label {
+  color: #666;
+}
+
+.key.black .key-label {
+  color: #888;
+  bottom: 8px;
+  font-size: 10px;
+}
+
+.piano-info {
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  text-align: center;
+}
+
+.piano-info a {
+  color: #6db3f2;
+  text-decoration: none;
+}
+
+.piano-info a:hover {
+  text-decoration: underline;
+}
+
+/* Recording and Playback Controls */
+.recording-controls,
+.playback-controls {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.recording-name-input {
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 200px;
+}
+
+.recording-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.recording-name-input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-record {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+.btn-record:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ec7063 0%, #e74c3c 100%);
+  transform: translateY(-1px);
+}
+
+.btn-record.recording {
+  background: linear-gradient(135deg, #c0392b 0%, #922b21 100%);
+  animation: pulse 1s infinite;
+}
+
+.record-icon {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+}
+
+.btn-record.recording .record-icon {
+  background: #e74c3c;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+  color: white;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  transform: translateY(-1px);
+}
+
+.btn-play {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.btn-play:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5dade2 0%, #3498db 100%);
+  transform: translateY(-1px);
+}
+
+.btn-pause {
+  background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+  color: white;
+}
+
+.btn-pause:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f5b041 0%, #f39c12 100%);
+  transform: translateY(-1px);
+}
+
+.btn-stop {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  color: white;
+}
+
+.btn-stop:hover:not(:disabled) {
+  background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+  transform: translateY(-1px);
+}
+
+.recording-status,
+.playback-status {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  text-align: center;
+  min-height: 24px;
+}
+
+.recording-status a,
+.playback-status a {
+  color: #6db3f2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.recording-status a:hover,
+.playback-status a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .piano-title {
+    font-size: 2rem;
+  }
+
+  .key.white {
+    width: 40px;
+    height: 150px;
+  }
+
+  .key.black {
+    width: 26px;
+    height: 95px;
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  .key.black.active,
+  .key.black:active {
+    height: 93px;
+  }
+
+  .key-label {
+    font-size: 9px;
+  }
+
+  .key.black .key-label {
+    font-size: 8px;
+  }
+}

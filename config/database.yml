@@ -1,0 +1,25 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+# Install the pg driver:
+#   gem install pg
+# On macOS with Homebrew:
+#   brew install postgresql
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: piano_web_app_development
+
+test:
+  <<: *default
+  database: piano_web_app_test
+
+production:
+  <<: *default
+  database: piano_web_app_production
+  username: piano_web_app
+  password: <%= ENV["PIANO_WEB_APP_DATABASE_PASSWORD"] %>

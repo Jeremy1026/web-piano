@@ -1,0 +1,80 @@
+<div class="piano-container" data-controller="playback" data-playback-notes-value="<%= @notes_json %>">
+  <h1 class="piano-title"><%= @recording.name %></h1>
+
+  <div class="piano" data-playback-target="keyboard">
+    <%# Octave 3 %>
+    <div class="key white" data-note="C3" data-playback-target="key">
+      <span class="key-label">C3</span>
+    </div>
+    <div class="key black" data-note="C#3" data-playback-target="key">
+      <span class="key-label">C#3</span>
+    </div>
+    <div class="key white" data-note="D3" data-playback-target="key">
+      <span class="key-label">D3</span>
+    </div>
+    <div class="key black" data-note="D#3" data-playback-target="key">
+      <span class="key-label">D#3</span>
+    </div>
+    <div class="key white" data-note="E3" data-playback-target="key">
+      <span class="key-label">E3</span>
+    </div>
+    <div class="key white" data-note="F3" data-playback-target="key">
+      <span class="key-label">F3</span>
+    </div>
+    <div class="key black" data-note="F#3" data-playback-target="key">
+      <span class="key-label">F#3</span>
+    </div>
+    <div class="key white" data-note="G3" data-playback-target="key">
+      <span class="key-label">G3</span>
+    </div>
+    <div class="key black" data-note="G#3" data-playback-target="key">
+      <span class="key-label">G#3</span>
+    </div>
+    <div class="key white" data-note="A3" data-playback-target="key">
+      <span class="key-label">A3</span>
+    </div>
+    <div class="key black" data-note="A#3" data-playback-target="key">
+      <span class="key-label">A#3</span>
+    </div>
+    <div class="key white" data-note="B3" data-playback-target="key">
+      <span class="key-label">B3</span>
+    </div>
+
+    <%# Octave 4 %>
+    <div class="key white" data-note="C4" data-playback-target="key">
+      <span class="key-label">C4</span>
+    </div>
+    <div class="key black" data-note="C#4" data-playback-target="key">
+      <span class="key-label">C#4</span>
+    </div>
+    <div class="key white" data-note="D4" data-playback-target="key">
+      <span class="key-label">D4</span>
+    </div>
+    <div class="key black" data-note="D#4" data-playback-target="key">
+      <span class="key-label">D#4</span>
+    </div>
+    <div class="key white" data-note="E4" data-playback-target="key">
+      <span class="key-label">E4</span>
+    </div>
+  </div>
+
+  <div class="playback-controls">
+    <button class="btn btn-play" data-playback-target="playBtn" data-action="click->playback#play">
+      Play
+    </button>
+    <button class="btn btn-pause" data-playback-target="pauseBtn" data-action="click->playback#pause" disabled>
+      Pause
+    </button>
+    <button class="btn btn-stop" data-playback-target="stopBtn" data-action="click->playback#stop" disabled>
+      Stop
+    </button>
+  </div>
+
+  <div class="playback-status" data-playback-target="status">
+    <%= @recording.notes.count %> notes recorded
+  </div>
+
+  <div class="piano-info">
+    <p><a href="/">Back to Piano</a></p>
+  </div>
+</div>
