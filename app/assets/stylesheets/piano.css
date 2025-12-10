@@ -294,6 +294,31 @@ body {
   text-decoration: underline;
 }
 
+/* Footer */
+.site-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.github-link:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.github-link svg {
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
   .piano-title {
     font-size: 2rem;

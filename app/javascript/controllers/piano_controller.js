@@ -239,9 +239,9 @@ export default class extends Controller {
 
       const data = await response.json()
 
-      if (data.id) {
-        const displayName = data.name || `Recording ${data.id}`
-        this.statusTarget.innerHTML = `Saved! <a href="/play/${data.id}">Play "${displayName}"</a>`
+      if (data.token) {
+        const displayName = data.name || 'your recording'
+        this.statusTarget.innerHTML = `Saved! <a href="/play/${data.token}">Play "${displayName}"</a>`
         this.recordedNotes = []
         this.nameInputTarget.value = ''
         this.nameInputTarget.classList.add('hidden')

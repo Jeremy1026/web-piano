@@ -16,6 +16,6 @@ class RecordingsController < ApplicationController
     name = params[:name].presence || "Recording #{recording.id}"
     recording.update!(name: name)
 
-    render json: { id: recording.id, name: recording.name }
+    render json: { token: recording.access_token, name: recording.name }
   end
 end
