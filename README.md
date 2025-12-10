@@ -17,7 +17,7 @@ A web-based piano application built with Ruby on Rails. Play piano using your mo
 
 ## Tech Stack
 
-- Ruby 3.2.2
+- Ruby 3.1.4
 - Rails 7.0.10
 - PostgreSQL
 - Hotwire (Turbo + Stimulus)
@@ -27,8 +27,8 @@ A web-based piano application built with Ruby on Rails. Play piano using your mo
 
 ### Prerequisites
 
-- Ruby 3.2.2
-- PostgreSQL
+- Ruby 3.1.4
+- MySQL
 - Bundler
 
 ### Installation
