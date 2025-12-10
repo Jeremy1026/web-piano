@@ -18,6 +18,7 @@ export default class extends Controller {
     this.audioContext = null
     this.activeOscillators = new Map()
     this.keyMap = new Map()
+    this.activeTouches = new Map()
 
     // Recording state
     this.isRecording = false
@@ -37,11 +38,40 @@ export default class extends Controller {
     this.handleKeyUp = this.handleKeyUp.bind(this)
     document.addEventListener('keydown', this.handleKeyDown)
     document.addEventListener('keyup', this.handleKeyUp)
+
+    // Bind mouse and touch events programmatically for reliability
+    this.handleMouseDown = this.handleMouseDown.bind(this)
+    this.handleMouseUp = this.handleMouseUp.bind(this)
+    this.handleMouseLeave = this.handleMouseLeave.bind(this)
+    this.handleTouchStart = this.handleTouchStart.bind(this)
+    this.handleTouchEnd = this.handleTouchEnd.bind(this)
+    this.handleTouchCancel = this.handleTouchCancel.bind(this)
+
+    this.keyTargets.forEach(keyElement => {
+      // Mouse events for desktop
+      keyElement.addEventListener('mousedown', this.handleMouseDown)
+      keyElement.addEventListener('mouseup', this.handleMouseUp)
+      keyElement.addEventListener('mouseleave', this.handleMouseLeave)
+      // Touch events for mobile with { passive: false }
+      keyElement.addEventListener('touchstart', this.handleTouchStart, { passive: false })
+      keyElement.addEventListener('touchend', this.handleTouchEnd, { passive: false })
+      keyElement.addEventListener('touchcancel', this.handleTouchCancel, { passive: false })
+    })
   }
 
   disconnect() {
     document.removeEventListener('keydown', this.handleKeyDown)
     document.removeEventListener('keyup', this.handleKeyUp)
+
+    // Remove mouse and touch event listeners
+    this.keyTargets.forEach(keyElement => {
+      keyElement.removeEventListener('mousedown', this.handleMouseDown)
+      keyElement.removeEventListener('mouseup', this.handleMouseUp)
+      keyElement.removeEventListener('mouseleave', this.handleMouseLeave)
+      keyElement.removeEventListener('touchstart', this.handleTouchStart)
+      keyElement.removeEventListener('touchend', this.handleTouchEnd)
+      keyElement.removeEventListener('touchcancel', this.handleTouchCancel)
+    })
 
     // Clean up audio
     if (this.audioContext) {
@@ -82,6 +112,11 @@ export default class extends Controller {
   startNote(note, keyElement) {
     const frequency = this.constructor.noteFrequencies[note]
     if (!frequency || this.activeOscillators.has(note)) return
+
+    // Ensure audio context is ready
+    if (!this.audioContext || this.audioContext.state === 'closed') {
+      this.initAudioContext()
+    }
 
     // Record the note if recording
     if (this.isRecording) {
@@ -183,6 +218,73 @@ export default class extends Controller {
       const note = keyElement.dataset.note
       this.endNote(note, keyElement)
     }
+  }
+
+  // Mouse event handlers for desktop
+  handleMouseDown(event) {
+    event.preventDefault()
+    const keyElement = event.currentTarget
+    const note = keyElement.dataset.note
+
+    if (!note || this.activeOscillators.has(note)) return
+
+    this.initAudioContext()
+    this.startNote(note, keyElement)
+  }
+
+  handleMouseUp(event) {
+    const keyElement = event.currentTarget
+    const note = keyElement.dataset.note
+
+    if (!note) return
+
+    this.endNote(note, keyElement)
+  }
+
+  handleMouseLeave(event) {
+    const keyElement = event.currentTarget
+    const note = keyElement.dataset.note
+
+    if (!note) return
+
+    this.endNote(note, keyElement)
+  }
+
+  // Touch event handlers for mobile
+  handleTouchStart(event) {
+    event.preventDefault()
+    const keyElement = event.currentTarget
+    const note = keyElement.dataset.note
+
+    if (!note) return
+
+    // Track this touch
+    for (const touch of event.changedTouches) {
+      this.activeTouches.set(touch.identifier, { note, keyElement })
+    }
+
+    // Initialize audio context on first touch (required for mobile)
+    this.initAudioContext()
+
+    if (!this.activeOscillators.has(note)) {
+      this.startNote(note, keyElement)
+    }
+  }
+
+  handleTouchEnd(event) {
+    event.preventDefault()
+
+    for (const touch of event.changedTouches) {
+      const touchData = this.activeTouches.get(touch.identifier)
+      if (touchData) {
+        this.endNote(touchData.note, touchData.keyElement)
+        this.activeTouches.delete(touch.identifier)
+      }
+    }
+  }
+
+  handleTouchCancel(event) {
+    this.handleTouchEnd(event)
   }
 
   // Recording methods

@@ -56,7 +56,20 @@ export default class extends Controller {
       return
     }
 
+    // Initialize audio context synchronously on user gesture (critical for mobile)
     this.initAudioContext()
+
+    // Handle mobile browsers that require async resume
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume().then(() => {
+        this.startPlayback()
+      })
+    } else {
+      this.startPlayback()
+    }
+  }
+
+  startPlayback() {
     this.isPlaying = true
     this.isPaused = false
 
